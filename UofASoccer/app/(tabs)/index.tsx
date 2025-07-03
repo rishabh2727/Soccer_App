@@ -2,6 +2,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 import { auth, db } from '../../services/firebase';
 
+
 export default function HomeScreen() {
   // just check if the auth and db objects have loaded properly uisng a ternanry operator
   return (
