@@ -4,27 +4,36 @@ import { db } from '../../services/firebase';
 import { collection, onSnapshot, query, orderBy, where } from 'firebase/firestore';
 import { useRouter } from 'expo-router';
 import { format, addDays, isToday, isSameDay } from 'date-fns';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
+//  we define the type here, beacuse typescript needs to know the type of game before it can be used.
 type Game = {
   id: string;
   [key: string]: any;
 };
 
 export default function GamesScreen() {
-  const [games, setGames] = useState<Game[]>([]);
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  // we use react hooks here to save the state, which can be updated later.
+  const [games, setGames] = useState<Game[]>([]); 
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());  //new date saves the today's date.
+  // Date is built in javascript date object
   const router = useRouter();
 
-  // Generate dates for the next 5 days
+  // Generate dates for the next 5 days, using stackoverflow.
   const dates = Array.from({ length: 5 }).map((_, i) => addDays(new Date(), i));
 
+  // this runs when the selectedDate changes, its like watch the variable selectedDate rerun this block 
+  // whenever it chnamges
   useEffect(() => {
+    // now we have to reset the hours for start of day and end of day becuase when we run the query
+    // in the firebase, we want to retreive all th games starting from 12:00 am till 11:59 on that day.
     const startOfDay = new Date(selectedDate);
     startOfDay.setHours(0, 0, 0, 0);
     
     const endOfDay = new Date(selectedDate);
     endOfDay.setHours(23, 59, 59, 999);
 
+    // the query where we filer by date and sort it in ascending order.
     const gamesRef = collection(db, 'games');
     const q = query(
       gamesRef,
@@ -33,6 +42,7 @@ export default function GamesScreen() {
       orderBy('Date', 'asc')
     );
 
+    // the realtime listener
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const gamesList: Game[] = [];
       querySnapshot.forEach((doc) => {
@@ -45,10 +55,13 @@ export default function GamesScreen() {
   }, [selectedDate]);
 
   const renderGame = ({ item }: { item: Game }) => (
-    <View style={styles.card}>
+    <TouchableOpacity
+      style={styles.card}
+      onPress={() => router.push(`./gamedetails/${item.id}`)}
+    >
       <View style={styles.gameHeader}>
         <Text style={styles.gameTime}>
-          {item.Date.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+          {item.Date.toDate().toLocaleTimeString([])}
         </Text>
         <View style={styles.playersBadge}>
           <Text style={styles.playersText}>{item.Players?.length || 0} players</Text>
@@ -56,7 +69,7 @@ export default function GamesScreen() {
       </View>
       <Text style={styles.description}>{item.Description || 'No description provided.'}</Text>
       <Text style={styles.location}>{item.Location || 'Location not specified'}</Text>
-    </View>
+    </TouchableOpacity>
   );
 
   return (
