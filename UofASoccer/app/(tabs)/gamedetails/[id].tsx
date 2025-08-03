@@ -5,9 +5,12 @@ import { collection, getCountFromServer } from 'firebase/firestore';
 import { db } from '@/services/firebase';
 import {doc, getDoc} from "firebase/firestore"
 import { useEffect, useState } from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, ImageBackground, Dimensions} from 'react-native';
 
 
+// for getting dimensions of the window, trying to place a football field on 1/4th of the window
+
+const {height} = Dimensions.get('window')
 // this function is responsible for displaying the game information here, thats all.
 export default function gameDetail() {
     // understanding async and await, 
@@ -39,20 +42,27 @@ export default function gameDetail() {
 // need to know how to write react-native UIs
 
 return (
-    <View style={styles.container}>
-      {game ? (
-        <>
-          <Text style={styles.title}>Game Details</Text>
-          <Text style={styles.detail}>📅 Date: {game.Date?.toDate().toDateString() || 'N/A'}</Text>
-          <Text style={styles.detail}>📍 Location: {game.Location || 'N/A'}</Text>
-          <Text style={styles.detail}>👥 Players: {game.Players?.length || 0}</Text>
-          <Text style={styles.detail}>📝 Description: {game.Description || 'No description'}</Text>
-        </>
-      ) : (
-        <Text style={styles.loadingText}>Loading game details...</Text>
-      )}
+  <View style = {styles.container}>
+    <ImageBackground 
+    source={require('../../../assets/images/soccer.jpeg')} 
+    style = {styles.footballGround} >
+    </ImageBackground>
+
+    <Text style = {styles.Players}>
+      Who's Playing
+    </Text>
+
+    <Text style = {styles.WhereWePlayText}>
+      Where We'll Play
+      We can play on the ground next to the VVC complex, or on Lister Field
+      <ImageBackground 
+      source={require('../../../assets/images/Map.png')} 
+      style = {styles.footballGround} >
+      </ImageBackground>
+    </Text>
+      
     </View>
-  );
+)
 }
 
 const styles = StyleSheet.create({
@@ -61,22 +71,26 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     padding: 20,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: '700',
-    marginBottom: 12,
-    color: '#333',
+  
+  footballGround: {
+    flex: 1,
+    height: '100%',
+    width: '100%'
   },
-  detail: {
-    fontSize: 16,
-    marginBottom: 8,
-    color: '#555',
+  Players: {
+    flex: 1,
+
   },
-  loadingText: {
-    fontSize: 16,
-    color: '#888',
-    textAlign: 'center',
-    marginTop: 50,
+  WhereWePlayText: {
+    flex: 1,
   },
-});
+
+  Map: {
+    flex: 1,
+    height: '35%',
+    width: '100%'
+  },
+
+
+})
 

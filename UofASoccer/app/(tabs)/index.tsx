@@ -1,6 +1,7 @@
 // app/(tabs)/index.tsx
 import { StyleSheet, Text, View } from 'react-native';
 import { auth, db } from '../../services/firebase';
+import {useRouter} from 'expo-router';
 
 
 export default function HomeScreen() {
