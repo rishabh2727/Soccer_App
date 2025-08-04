@@ -15,6 +15,7 @@ import { blue } from 'react-native-reanimated/lib/typescript/Colors';
 const {height} = Dimensions.get('window')
 // this function is responsible for displaying the game information here, thats all.
 export default function gameDetail() {
+
     // understanding async and await, 
     // you can use await only inside an async function.
     // async always returns a promise. it needs to be resolved.
@@ -71,7 +72,7 @@ export default function gameDetail() {
             <Text style={styles.WhereWePlayText}>
                 Where We'll Play
             </Text>
-            <Text>
+            <Text style = {styles.Place}>
                 We can play on the ground next to the VVC complex, or on Lister Field
             </Text>
 
@@ -102,34 +103,64 @@ const styles = StyleSheet.create({
         width: '100%',
     },
     Players: {
-        fontSize: 30,
-        fontWeight: 'bold', 
+        fontSize: 24,
+        fontWeight: 'bold',
         marginVertical: 10,
-         textAlign: 'center'
+        textAlign: 'center',  // Center the "Who's Playing" text
+        color: '#333',        // Dark color for better readability
     },
     playersList: {
-        flexDirection: 'row', 
-        flexWrap: 'wrap', 
-        justifyContent: 'space-between',
-        marginBottom: 50,
+        flexDirection: 'row',  // Align the player items horizontally
+        flexWrap: 'wrap',      // Allow players to wrap to the next line
+        justifyContent: 'center',  // Center items horizontally
+        alignItems: 'center',  // Center items vertically
+        marginTop: 20,         // Add space between title and players
     },
     playerItem: {
-        width: '25%',
-        marginBottom: 10,
+        backgroundColor: '#f0f0f0',  // Light gray background for a modern look
+        width: '45%',                // Each player takes up 45% of the container's width
+        margin: 10,                  // Space between the player cards
+        padding: 15,                 // Padding inside each player card
+        borderRadius: 12,            // Rounded corners for a modern look
+        shadowColor: '#000',         // Shadow color for the card effect
+        shadowOffset: { width: 0, height: 2 },  // Shadow position
+        shadowOpacity: 0.1,          // Light shadow for modern effect
+        shadowRadius: 5,             // Soft shadow blur
+        elevation: 3,                // Elevation for Android devices to create the shadow effect
+        justifyContent: 'center',    // Center content inside each card
+        alignItems: 'center',        // Center content inside each card
     },
     playerNumber: {
-        fontWeight: 'bold',
-        marginRight: 5,
+        fontSize: 18,
+        fontWeight: 'bold',          // Make the number bold to stand out
+        color: '#006400',            // Dark green for the number to give it prominence
     },
     playerName: {
-        fontSize: 16,
+        fontSize: 20,
+        color: '#333',               // Dark color for the player name for better readability
+        marginTop: 5,  
+        fontFamily: 'Roboto', 
+        fontWeight: 'bold',             // Space between the number and the name
     },
     WhereWePlayText: {
         fontSize: 18,
         fontWeight: 'bold',
         marginBottom: 10,
+        textAlign: 'center',
+        backgroundColor: '#006400',
+        color: '#FFD700', 
+        paddingVertical: 15,
+        paddingHorizontal: 40,
+        borderRadius: 10,
+    },
+
+    Place : {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 10,
         textAlign: 'center'
     },
+
     Map: {
         width: '100%',
         height: 500, 
@@ -139,15 +170,14 @@ const styles = StyleSheet.create({
         paddingVertical: 15,
         paddingHorizontal: 40,
         borderRadius: 10,
-        alignItems: 'center',
-        justifyContent: 'center',
         marginTop: 20,
-        alignSelf: 'center', 
+        textAlign: 'center'
     },
     JoinGame: {
         color: '#FFD700', 
         fontSize: 18,
         fontWeight: 'bold',
+        textAlign: 'center'
     },
 });
 
