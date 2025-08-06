@@ -9,6 +9,7 @@ import {View, Text, StyleSheet, ImageBackground, Dimensions, ScrollView, Touchab
 import { Button } from '@react-navigation/elements';
 import { blue } from 'react-native-reanimated/lib/typescript/Colors';
 import { getAuth } from 'firebase/auth';
+import { Alert } from 'react-native';
 
 
 // for getting dimensions of the window, trying to place a football field on 1/4th of the window
@@ -48,30 +49,36 @@ export default function gameDetail() {
 // need to know how to write react-native UIs
 
     // Function to handle joining the game
-    const handleJoinGame = async () => {
-        const auth = getAuth();
-        const currentUser = auth.currentUser;
+// Function to handle joining the game
+const handleJoinGame = async () => {
+    const auth = getAuth();
+    const currentUser = auth.currentUser;
 
-        if (!currentUser) {
-            console.log("No user is logged in");
-            return;
-        }
+    if (!currentUser) {
+        console.log("No user is logged in");
+        return;
+    }
 
-        const playerName = currentUser.displayName || currentUser.email; 
+    const playerName = currentUser.displayName || currentUser.email; 
 
-        const docRef = doc(db, "games", id as string);
+    const docRef = doc(db, "games", id as string);
 
-        try {
-            await updateDoc(docRef, {
-                Players: arrayUnion(playerName), 
-            });
+    try {
+        // Update the 'Players' array in Firestore
+        await updateDoc(docRef, {
+            Players: arrayUnion(playerName), 
+        });
 
+        // Set the state to reflect that the user has joined
+        setIsJoined(true);
 
-            setIsJoined(true);
-        } catch (error) {
-            console.log("Error joining game: ", error);
-        }
-    };
+        // Show an alert that the player has successfully joined the game
+        Alert.alert("Success!", "You've joined the game!");
+    } catch (error) {
+        console.log("Error joining game: ", error);
+    }
+};
+
 
     return (
       <ScrollView>
