@@ -1,13 +1,14 @@
 // dynamic route that loads based on the game's ID
 
 import { useLocalSearchParams } from 'expo-router';
-import { collection, getCountFromServer } from 'firebase/firestore';
-import { db } from '@/services/firebase';
-import {doc, getDoc} from "firebase/firestore"
+import { arrayUnion, collection, getCountFromServer } from 'firebase/firestore';
+import firebase, { db } from '@/services/firebase';
+import {doc, getDoc, updateDoc} from "firebase/firestore"
 import { useEffect, useState } from 'react';
 import {View, Text, StyleSheet, ImageBackground, Dimensions, ScrollView, TouchableOpacity} from 'react-native';
 import { Button } from '@react-navigation/elements';
 import { blue } from 'react-native-reanimated/lib/typescript/Colors';
+import { getAuth } from 'firebase/auth';
 
 
 // for getting dimensions of the window, trying to place a football field on 1/4th of the window
@@ -23,6 +24,8 @@ export default function gameDetail() {
     // this is the id of the game clicked on the games screen.
     const { id } = useLocalSearchParams();
     const [game, setGame] =  useState<any>(null)
+    const [isJoined, setIsJoined] = useState(false);
+    
     useEffect(() => {
         if (!id) return ;
         async function fetchGame(){
@@ -43,6 +46,32 @@ export default function gameDetail() {
         // rerun this effect, when the id changes.
     },[id]);
 // need to know how to write react-native UIs
+
+    // Function to handle joining the game
+    const handleJoinGame = async () => {
+        const auth = getAuth();
+        const currentUser = auth.currentUser;
+
+        if (!currentUser) {
+            console.log("No user is logged in");
+            return;
+        }
+
+        const playerName = currentUser.displayName || currentUser.email; 
+
+        const docRef = doc(db, "games", id as string);
+
+        try {
+            await updateDoc(docRef, {
+                Players: arrayUnion(playerName), 
+            });
+
+
+            setIsJoined(true);
+        } catch (error) {
+            console.log("Error joining game: ", error);
+        }
+    };
 
     return (
       <ScrollView>
@@ -84,9 +113,15 @@ export default function gameDetail() {
             </ImageBackground>
 
             {/* Join Game Button */}
-            <TouchableOpacity style={styles.JoinGameButton}>
-                <Text style={styles.JoinGame}>Join Game</Text>
-            </TouchableOpacity>
+                <TouchableOpacity 
+                    style={styles.JoinGameButton} 
+                    onPress={handleJoinGame}
+                    disabled={isJoined} // Disable the button if the user has already joined
+                >
+                    <Text style={styles.JoinGame}>
+                        {isJoined ? "You've joined the game!" : "Join Game"}
+                    </Text>
+                </TouchableOpacity>
         </View>
         </ScrollView>
     );
@@ -171,7 +206,8 @@ const styles = StyleSheet.create({
         paddingHorizontal: 40,
         borderRadius: 10,
         marginTop: 20,
-        textAlign: 'center'
+        textAlign: 'center',
+
     },
     JoinGame: {
         color: '#FFD700', 
